@@ -91,4 +91,4 @@ Quand tout est configuré, et que HA a bien redémarré, vous deviez pouvoir jou
 Pour utiliser le fonctionnement réel, il faut  
 * Remplacer `weather.paris_1er_arrondissement` dans les premières lignes code de `meteo.jinja` et dans la carte ci-dessous par votre propre entité
 * Repartir de la [carte suivante](https://github.com/Pulpyyyy/meteocss/blob/main/lovelace/real.yaml) pour exploiter les entités réelles.
-Et compléter en placant les éléments de votre choix entre le foreground et le background, ou au 1er plan
+* Et compléter en plaçant les éléments de votre choix entre le foreground et le background, ou au 1er plan
