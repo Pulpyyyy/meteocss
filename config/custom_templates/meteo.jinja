@@ -41,6 +41,10 @@
 {%- set normal_flakes=200 -%}           {# - normal_flakes : Chutes de neige standard avec une intensité moyenne #}
 {%- set low_flakes=80 -%}               {# - low_flakes : Faibles chutes de neige avec une faible densité de flocons #}
 
+{# Configuration de l'intensité du brouillard #}
+{# Définit différents niveaux de chutes de neige [nombre de flocons] #}
+{%- set normal_fog = 12 -%}               {# - normal_fog : Brouillars standard avec une intensité moyenne #}
+
 {# Configuration de toutes les conditions météo #}
 {# Dictionnaire détaillant chaque condition météorologique et ses propriétés visuelles #}
 {# Chaque condition peut inclure :
@@ -118,7 +122,7 @@
     },
     
     'fog': {
-        'fog': '',
+        'fog': 'normal_fog',
         'day_sky': normal_day,
         'night_sky': snowy_day
     },
@@ -399,7 +403,7 @@
 {# Macros pour générer les nuages #}
 {# https://codepen.io/V17h3m/pen/Xdxxgy #}
 {%- macro _cloud_html(num_clouds=15) -%}
-    {%- set num_clouds = num_clouds|int(20) -%}
+    {%- set num_clouds = num_clouds|int(15) -%}
     "
     {# Génère des éléments HTML pour chaque nuage avec une classe spécifique pour chaque nuage #}
     {%- for i in range(num_clouds) -%}
@@ -466,24 +470,14 @@
 
 {# Macro pour générer le brouillard #}
 {# https://codepen.io/BlogFire/pen/RwBdjvp #}
-{%- macro _fog_html() -%}
-    "
-    <div class='mist'>
-        <span style='--i: 1'></span>
-        <span style='--i: 3'></span>
-        <span style='--i: 16'></span>
-        <span style='--i: 5'></span>
-        <span style='--i: 13'></span>
-        <span style='--i: 6'></span>
-        <span style='--i: 7'></span>
-        <span style='--i: 10'></span>
-        <span style='--i: 8'></span>
-        <span style='--i: 7'></span>
-        <span style='--i: 10'></span>
-        <span style='--i: 8'></span>
-        <span style='--i: 17'></span>
-    </div>
-    "
+{%- macro _fog_html(num_fog=12) -%}
+    {%- set num_fog = num_fog|int(15) -%}
+    {%- set ns = namespace(fog="<div class='mist'>") -%}
+        {%- for n in range(1,num_fog) -%}
+            {%- set ns.fog = ns.fog ~ "<span style='--i: " ~ _random(1,20) ~ "'></span>" -%}
+        {%- endfor -%}
+    {%- set ns.fog=ns.fog ~ "</div>" -%}
+    "{{ns.fog}}"
 {%- endmacro -%}
 
 {# Macro pour générer le CSS du brouillard avec animation #}
@@ -672,7 +666,7 @@
 
         {# Gère le brouillard (fog) #}
         {%- if 'fog' in conditions[current_weather].keys()|list -%}  
-            {%- set html = html ~ _fog_html() -%}
+            {%- set html = html ~ _fog_html(conditions[current_weather]['fog']) -%}
             {%- set css = css ~ _fog_css() -%}
         {%- endif -%}
     {%- endif -%}
