@@ -1,6 +1,6 @@
 {
   "name": "Météo CSS",
-  "filename": "meteo.jinja",
+  "filename": "config/custom_templates/meteo.jinja",
   "homeassistant": "2025.1.0",
   "render_readme": true
 }
