@@ -136,7 +136,7 @@
 -%}
 
 {# Liste des conditions météorologiques où les nuages sont considérés comme faisant partie de l'arrière-plan #}
-{%- set cloudbackground = ['partlycloudy','sunny'] -%}
+{%- set force2background = ['partlycloudy','sunny'] -%}
 
 {# ############################################# #}
 {# Macro pour la génération de nombres décimaux aléatoires entre 0 et 1 #}
@@ -628,7 +628,7 @@
         {%- endif -%}
 
         {# Nuages pour temps partiellement nuageux/ensoleillé #}
-        {%- if 'clouds' in conditions[current_weather].keys()|list and current_weather in cloudbackground -%}
+        {%- if 'clouds' in conditions[current_weather].keys()|list and current_weather in force2background -%}
             {%- set html = html ~ _cloud_html(conditions[current_weather]['clouds'][0]) -%}
             {%- set css = css ~ _cloud_css(*conditions[current_weather]['clouds'], wind_speed = speed) -%}
         {%- endif -%}
@@ -653,7 +653,7 @@
         {%- endif -%}
 
         {# Gère les nuages pour d'autres conditions #}
-        {%- if 'clouds' in conditions[current_weather].keys()|list and not current_weather in cloudbackground -%}
+        {%- if 'clouds' in conditions[current_weather].keys()|list and not current_weather in force2background -%}
             {%- set html = html ~ _cloud_html(conditions[current_weather]['clouds'][0]) -%}
             {%- set css = css ~ _cloud_css(*conditions[current_weather]['clouds'], wind_speed = speed) -%}
         {%- endif -%}
