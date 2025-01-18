@@ -1,5 +1,5 @@
 {# Définit l'entité météo spécifique à utiliser pour récupérer les données météo #}
-{%- set _location = 'weather.paris_1er_arrondissement' -%}
+{%- set _location = 'weather.saint_jean_le_blanc' -%}
 
 {# Ces variables définissent des dégradés de couleurs pour représenter différentes intensités de la nuit #}
 {%- set clear_night='#25259c, #2a2a60, #0f0344' -%}      {# - clear_night : Palette pour une nuit claire avec des tons bleus profonds #}
@@ -42,8 +42,8 @@
 {%- set low_flakes=80 -%}               {# - low_flakes : Faibles chutes de neige avec une faible densité de flocons #}
 
 {# Configuration de l'intensité du brouillard #}
-{# Définit différents niveaux de chutes de neige [nombre de flocons] #}
 {%- set normal_fog = 12 -%}               {# - normal_fog : Brouillard standard avec une intensité moyenne #}
+{%- set color_fog = "#C0C0C0" -%}         {# - normal_fog : Brouillard standard avec une intensité moyenne #}
 
 {# Configuration de toutes les conditions météo #}
 {# Dictionnaire détaillant chaque condition météorologique et ses propriétés visuelles #}
@@ -482,7 +482,7 @@
 
 {# Macro pour générer le CSS du brouillard avec animation #}
 {%- macro _fog_css() -%}
-    "
+    {{"
     .mist {
     position: absolute;
     bottom: 65%;
@@ -499,7 +499,7 @@
     margin: 0 15px;
     min-width: 35px;
     height: 100px;
-    background: #ccc;
+    background: " ~ color_fog ~ ";
     border-radius: 50%;
     opacity: 0;
     filter: blur(20px);
@@ -530,7 +530,7 @@
         transform: translateX(150px) translateY(-120px) scaleX(16) scaleY(6);
     }
     }
-    "
+    "}}
 {%- endmacro -%}
 
 {# ############################################# #}
