@@ -41,9 +41,9 @@
 {%- set normal_flakes=200 -%}           {# - normal_flakes : Chutes de neige standard avec une intensité moyenne #}
 {%- set low_flakes=80 -%}               {# - low_flakes : Faibles chutes de neige avec une faible densité de flocons #}
 
-{# Configuration de l'intensité du brouillard #}
+{# Configuration de l'intensité et la couleur du brouillard #}
 {%- set normal_fog = 12 -%}               {# - normal_fog : Brouillard standard avec une intensité moyenne #}
-{%- set color_fog = "#C0C0C0" -%}         {# - normal_fog : Brouillard standard avec une intensité moyenne #}
+{%- set color_fog = "#B3B3B3" -%}         {# - color_fog : Couleur du brouillard #}
 
 {# Configuration de toutes les conditions météo #}
 {# Dictionnaire détaillant chaque condition météorologique et ses propriétés visuelles #}
@@ -482,7 +482,7 @@
 
 {# Macro pour générer le CSS du brouillard avec animation #}
 {%- macro _fog_css() -%}
-    {{"
+    "
     .mist {
     position: absolute;
     bottom: 65%;
@@ -530,7 +530,7 @@
         transform: translateX(150px) translateY(-120px) scaleX(16) scaleY(6);
     }
     }
-    "}}
+    "
 {%- endmacro -%}
 
 {# ############################################# #}
