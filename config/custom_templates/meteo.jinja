@@ -1,0 +1,686 @@
+{# Définit l'entité météo spécifique à utiliser pour récupérer les données météo #}
+{%- set _location = 'weather.paris_1er_arrondissement' -%}
+
+{# Ces variables définissent des dégradés de couleurs pour représenter différentes intensités de la nuit #}
+{%- set clear_night='#25259c, #2a2a60, #0f0344' -%}      {# - clear_night : Palette pour une nuit claire avec des tons bleus profonds #}
+{%- set normal_night='#272762, #302c2c' -%}              {# - normal_night : Palette pour une nuit standard avec des nuances sombres #}
+{%- set dark_night ='#0e0e54, #000000' -%}               {# - dark_night : Palette pour une nuit très sombre avec des tons très foncés #}
+
+{# Ces variables définissent des dégradés de couleurs pour un type de journée spécifique #}
+{%- set normal_day='#B9DFFF, #4BA0DB, #004390' -%}      {# - normal_day : Journée standard avec des tons bleus clairs #}
+{%- set rainy_day='#B9DFFF, #C1CBD0 , #91A6B0' -%}      {# - rainy_day : Journée pluvieuse avec des couleurs grises et bleutées #}
+{%- set dark_day='#B9DFFF , #2F4F4F , #708090' -%}      {# - dark_day : Journée sombre avec des tons plus foncés #}
+{%- set snowy_day='#B0E2FF , #AAAAAA , #D3D3D3' -%}     {# - snowy_day : Journée enneigée avec des tons blancs et gris #}
+{%- set grey_day='#B4C4CB, #A4A6A8, #94A9c7' -%}        {# - grey_day : Journée grise avec des nuances de gris et de bleu #}
+
+{# Dégradés de couleurs pour le lever et le coucher du soleil #}
+{# Définit des transitions de couleurs pour simuler les moments de transition du jour #}
+{%- set sunrise_day='#FFF5C3 5%, #FFD966 20%, #FFA64D 40%, #FF7F50 60%, #FF4D4D 80%, #5D0000 100%' -%}     {# - sunrise_day : Palette de couleurs du lever du soleil #}
+{%- set sunset_day='#FEFEFFCC 5%, #ECFF00 10%, #FD3229 20%, #F30000 30%, #5D0000 45%, #004390 100%' -%}    {# - sunset_day : Palette de couleurs du coucher du soleil #}
+
+{# Configuration de la densité des nuages, permettant de paramétrer l'apparence des nuages selon différentes conditions #}
+{# Chaque liste contient [nombre de nuages, taille des nuages, variation du gris clair/0 à foncé/3] #}
+{%- set normal_clouds=[20, 6, 2] -%}    {# - normal_clouds : Configuration standard pour des nuages modérés #}
+{%- set heavy_clouds=[30, 7, 3] -%}     {# - heavy_clouds : Configuration pour des nuages très denses #}
+{%- set low_clouds=[10, 3, 1] -%}       {# - low_clouds : Configuration pour peu de nuages #}
+{%- set minimal_clouds=[5, 3, 0] -%}    {# - minimal_clouds : Configuration avec très peu de nuages #}
+
+{# Configuration supplémentaire pour les étoiles #}
+{# Chaque liste contient [nombre d'étoiles, nombre d'étoiles filantes] #}
+{%- set extra_stars=[250, 8] -%}
+
+{# Configuration de l'intensité de la pluie #}
+{# Définit différents niveaux d'intensité des précipitations [nombre de gouttes] #}
+{%- set normal_rain=200 -%}             {# - normal_rain : Pluie standard avec une intensité moyenne #}
+{%- set low_rain=30 -%}                 {# - low_rain : Faible pluie avec une faible densité de gouttes #}
+{%- set heavy_rain=450 -%}              {# - heavy_rain : Forte pluie avec une densité élevée de gouttes #}
+{%- set middle_rain=100 -%}             {# - middle_rain : Pluie modérée avec une intensité moyenne #}
+
+{# Configuration de l'intensité des chutes de neige #}
+{# Définit différents niveaux de chutes de neige [nombre de flocons] #}
+{%- set normal_flakes=200 -%}           {# - normal_flakes : Chutes de neige standard avec une intensité moyenne #}
+{%- set low_flakes=80 -%}               {# - low_flakes : Faibles chutes de neige avec une faible densité de flocons #}
+
+{# Configuration de toutes les conditions météo #}
+{# Dictionnaire détaillant chaque condition météorologique et ses propriétés visuelles #}
+{# Chaque condition peut inclure :
+#  - clouds : Configuration des nuages
+#  - day_sky : Palette de couleurs pour le jour
+#  - night_sky : Palette de couleurs pour la nuit
+#  - drops : Intensité de la pluie
+#  - flakes : Intensité des chutes de neige
+#  - lightning : Présence d'éclairs
+#  - fog : Présence de brouillard
+#  - stars : Configuration des étoiles
+#}
+{%- set conditions = {
+    'lightning-rainy': {
+        'clouds': heavy_clouds,
+        'day_sky': grey_day,
+        'night_sky': dark_night,
+        'drops': heavy_rain,
+        'lightning': ''
+    },
+    
+    'pouring': {
+        'clouds': normal_clouds,
+        'day_sky': dark_day,
+        'night_sky': dark_night,
+        'drops': normal_rain
+    },
+    
+    'rainy': {
+        'clouds': normal_clouds,
+        'day_sky': rainy_day,
+        'night_sky': normal_night,
+        'drops': normal_rain
+    },
+
+    'snowy-rainy': {
+        'clouds': low_clouds,
+        'day_sky': rainy_day,
+        'night_sky': normal_night,
+        'drops': middle_rain,
+        'flakes': low_flakes
+    },
+    
+    'lightning': {
+        'clouds': heavy_clouds,
+        'day_sky': dark_day,
+        'night_sky': dark_night,
+        'drops': heavy_rain,
+        'lightning': ''
+    },
+    
+    'cloudy': {
+        'clouds': low_clouds,
+        'day_sky': grey_day,
+        'night_sky': normal_night
+    },
+    
+    'partlycloudy': {
+        'clouds': low_clouds,
+        'day_sky': normal_day,
+        'night_sky': normal_night
+    },
+    
+    'snowy': {
+        'clouds': low_clouds,
+        'day_sky': snowy_day,
+        'night_sky': normal_night,
+        'flakes': normal_flakes
+    },
+    
+    'sunny': {
+        'clouds': minimal_clouds,
+        'night_sky': snowy_day,
+        'day_sky': normal_day
+    },
+    
+    'fog': {
+        'fog': '',
+        'day_sky': normal_day,
+        'night_sky': snowy_day
+    },
+    
+    'clear-night': {
+        'clouds': minimal_clouds,
+        'stars': extra_stars,
+        'night_sky': clear_night
+    }
+}
+-%}
+
+{# Liste des conditions météorologiques où les nuages sont considérés comme faisant partie de l'arrière-plan #}
+{%- set cloudbackground = ['partlycloudy','sunny'] -%}
+
+{# ############################################# #}
+{# Macro pour la génération de nombres décimaux aléatoires entre 0 et 1 #}
+{%- macro _random() -%}
+    {%- set ns=namespace(rnd=1) -%}
+    {%- set n=2%}
+    {%- for i in range(0,n) -%}
+        {%- set r=range(0, 100000) | random -%}
+        {%- set ns.rnd = ns.rnd * range(0, 100000) | random -%}
+    {%- endfor -%}
+    {{ns.rnd/(100000**n)}}
+{%- endmacro -%}
+
+{# Macro pour la génération de nombres décimaux aléatoires avec des bornes et des pas variables #}
+{%- macro _random(min=0,max=10,step=1) -%}
+  {{ ((range(min,max+step)| random) // step)*step }}
+{%- endmacro -%}
+
+
+{# ############################################# #}
+{# Macro de génération de la lune et du soleil #}
+{%- macro _sky_common(margin_top, sun_left, sun_top, elevation = state_attr('sun.sun','elevation'), rising = state_attr('sun.sun','rising'), below_horizon = is_state('sun.sun', 'below_horizon'), current_weather = states(_location )) -%}
+
+    {# Gestion des conditions météo exceptionnelles #}
+    {%- if current_weather in ['exceptional','hail'] -%}
+        {%- set current_weather = 'rainy' -%}
+    {%- elif current_weather in ['windy-variant'] -%}
+        {%- set current_weather = 'cloudy' -%}
+    {%- endif -%}
+    "
+        ha-card {
+            margin-top: {{ margin_top }};
+            min-height: 75em;
+            max-height: 75em;
+            width: 100%;
+            top: 0;
+            left: 0;
+            flex: 1;
+            position: relative;
+            background: radial-gradient(
+                at {{ sun_left }}% {{ sun_top }}%, 
+                {%- if below_horizon | bool -%}
+                    {{ conditions[current_weather]['night_sky'] }}
+                {%- else -%}
+                    {%- if elevation |int(0) < 5 -%}
+                        {%- if rising | bool -%}
+                            {{sunrise_day}}
+                        {%- else -%}
+                            {{sunset_day}}
+                        {%- endif -%}
+                    {%- else -%}
+                        {{ conditions[current_weather]['day_sky'] }}
+                    {%- endif -%}
+                {%- endif -%}
+            );
+            overflow: hidden;
+        }
+    "
+{%- endmacro -%}
+
+{%- macro sky(inverse=false, demo=false) -%}
+    {%- if demo -%}
+        {%- if inverse | bool-%}
+            {{ _sky_common('-4%', sun_left=states('sensor.sun_left_inverse_demo'), sun_top=states('sensor.sun_top_inverse_demo'), elevation = states('input_number.solar_elevation_demo'), rising=states('input_boolean.rising_demo'), below_horizon=states('binary_sensor.sun_below_horizon_demo'), current_weather=states('input_select.weather_condition_demo')) }}
+        {%- else -%}
+            {{ _sky_common('-1%', sun_left=states('sensor.sun_left_demo'), sun_top=states('sensor.sun_top_demo'), elevation = states('input_number.solar_elevation_demo'), rising=states('input_boolean.rising_demo'),  below_horizon=states('binary_sensor.sun_below_horizon_demo'), current_weather=states('input_select.weather_condition_demo')) }}
+        {%- endif -%}
+    {%- elif inverse | bool-%}
+        {{ _sky_common('-4%', states('sensor.sun_left_inverse'), states('sensor.sun_top_inverse')) }}
+    {%- else -%}
+        {{ _sky_common('-1%', states('sensor.sun_left'), states('sensor.sun_top')) }}
+    {%- endif -%}
+{%- endmacro -%}
+
+{# ############################################# #}
+{# https://codepen.io/ericadu/pen/REQOGE #}
+{%- macro _stars_html(num_stars = 100, num_shots = 2) -%}
+    "
+    {%- for i in range(0,num_stars|int(0)+1) -%}
+        <div class='star star-{{i}}'></div>
+    {%- endfor -%}
+    {%- for n in range(0,num_shots|int(0)+1) -%}
+        <div class='shot shot-{{n}}'></div>
+    {%- endfor -%}
+    "
+{%- endmacro -%}
+
+{%- macro _stars_css(num_stars = 100, num_shots  =2) -%}
+    {%- set ns = namespace(stars='\n.star {
+        position: absolute;
+            width: 2px;
+            height: 2px;
+            border-radius: 1px;
+            background: #fff;
+        }',
+        shots='.shot {
+                position: absolute;
+                width: 3px;
+                height: 3px;
+                background: #fff;
+            }
+            .shot::after {
+                content: "";
+                display: block;
+                position: absolute;
+                width: 80px;
+                height: inherit;
+                top: 0;
+                left: 0;
+                background: linear-gradient(to left, rgba(255, 255, 255, 0) 0%, white 100%);
+            }
+        ')
+    -%}
+    {%- for i in range(0,num_stars|int(0)+1) -%}
+        {%- set ns.stars = ns.stars ~ '
+        .star-'~i~' {
+            top: '~ _random(0,100) ~'%;
+            left: '~ _random(0,100) ~'%;
+            animation: '~ (_random(0,30)|int(0)+30)/10 ~'s star '~ _random(0,50)|int(0)/-10 ~'s infinite;
+        }'
+        -%}
+    {%- endfor -%}
+    {%- set ns.stars = ns.stars ~ '
+        @keyframes star {
+        to {
+            opacity: 0.3;
+            }
+        }
+        '
+    -%}
+
+    {%- for n in range(0,num_shots|int(0)+1) -%}
+        {%- set ns.shots = ns.shots ~ '
+            .shot-'~n~' {
+                top: '~ _random(0,20) ~'%;
+                left: '~ _random(0,100) ~'%;
+                animation: '~ (_random(0,30)|int(0)+30)/10 ~'s shot '~ _random(0,50)|int(0)/-10 ~'s infinite;
+            }'
+        -%}
+    {%- endfor -%}
+
+    {%- set ns.shots = ns.shots ~ '
+        @keyframes shot {
+        0% {
+            transform: translateY(0px) translateX(0px) rotate(-135deg);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(100vh) translateX(100vw) rotate(-135deg);
+            opacity: 1;
+        }
+        }
+    '
+    -%}
+    "{{ns.stars}}{{ns.shots}}"
+{%- endmacro -%}
+{# ############################################# #}
+{# Macros pour générer de la pluie #}
+{# https://codepen.io/jh3y/pen/WyNdMG #}
+{%- macro _rain_html(num_drops=25) -%}
+    {%- set ns = namespace(rain="") -%} 
+    {%- set ns.rain=ns.rain ~ "<div class='rain'>" -%}
+    {%- for d in range(1,num_drops) -%}
+        {%- set ns.rain=ns.rain ~"<svg class='rain__drop' preserveAspectRatio='xMinYMin' viewBox='0 0 5 50' style='--x: "~_random(1,99)~"; --y: "~_random(1,99)~"; --o: "~_random()~"; --a: "~(_random()|float(0)+0.5)~"; --d: -"~(_random()|float(0)* 2 - 1 )~"; --s: "~_random()~"'><path stroke='none' d='M 2.5,0 C 2.6949458,3.5392017 3.344765,20.524571 4.4494577,30.9559 5.7551357,42.666753 4.5915685,50 2.5,50 0.40843152,50 -0.75513565,42.666753 0.55054234,30.9559 1.655235,20.524571 2.3050542,3.5392017 2.5,0 Z'></path></svg>" -%}
+    {%- endfor%}
+    {%- set ns.rain=ns.rain ~"" -%} {# FIX </DIV> #}
+    {{ns.rain}}
+{%- endmacro -%}
+
+{# Macro pour générer le CSS de la pluie avec animation #}
+{%- macro _rain_css() -%}
+    "
+    .rain__drop {
+        -webkit-animation-delay: calc(var(--d) * 1s);
+        animation-delay: calc(var(--d) * 1s);
+        -webkit-animation-duration: calc(var(--a) * 1s);
+        animation-duration: calc(var(--a) * 1s);
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
+        -webkit-animation-name: drop;
+        animation-name: drop;
+        -webkit-animation-timing-function: linear;
+        animation-timing-function: linear;
+        height: 40px;
+        left: calc(var(--x) * 1%);
+        position: absolute;
+        top: calc((var(--y) + 50) * -1px);
+    }
+    .rain__drop path {
+        fill: #fefefe;
+        opacity: var(--o);
+        transform: scaleY(calc(var(--s) * 1.5));
+    }
+    @-webkit-keyframes drop {
+        90% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(100vh);
+        }
+    }
+    @keyframes drop {
+        90% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(100vh);
+        }
+    }
+    "
+{%- endmacro -%}
+{# ############################################# #}
+{# Macros pour générer de la neige #}
+{# https://codepen.io/alphardex/pen/dyPorwJ #}
+{%- macro _snow_html(num_flakes=80) -%}
+    "
+    {%- for i in range(0,num_flakes|int(0)) -%}
+        <div class="snow"></div>
+    {%- endfor -%}
+    "
+{%- endmacro -%}
+
+{# Macro pour générer le CSS de la neige avec animation #}
+{%- macro _snow_css(num_flakes=80) -%}
+    {%- set ns = namespace(snow_output = " .snow {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            filter: blur(0.1rem);
+        }"
+    ) -%}
+    {%- for i in range(1, num_flakes|int(0)+2) -%}
+        {%- set random_x = (_random(0,999)|int(0)*1000+_random(0,1000)|int(0)) * 0.0001 -%}
+        {%- set random_offset = (_random(0,1000)|int(0)*_random(0,1000)|int(0)-100000)|int(0)  * 0.0001 -%}
+        {%- set random_x_end = random_x|float(0) + random_offset|float(0) -%}
+        {%- set random_x_end_yoyo = random_x|float(0) + (random_offset|float(0) / 2) -%}
+        {%- set random_yoyo_time = _random(30000, 80000)|int(0)  / 1000 -%}
+        {%- set random_yoyo_y = random_yoyo_time|float(0) /1 -%}
+        {%- set random_scale = _random(0,10000)|int(0)  * 0.0001 -%}
+        {%- set fall_duration = _random(10, 30) -%}
+        {%- set fall_delay = "-"~_random(0,30)|int(0) -%}
+        {%- set ns.snow_output = ns.snow_output ~ ".snow:nth-child("~i~") {
+            opacity: "~"%.4f"|format(_random(100,1000)|int(0) * 0.001)~";
+            transform: translate("~"%.4f"|format(random_x)~"vw, -10px) scale("~"%.4f"|format(random_scale)~");
+            animation: fall-"~i~" "~fall_duration~"s "~fall_delay~"s linear infinite;
+        }
+        @keyframes fall-"~i~" {
+        "~random_yoyo_time~"% {
+            transform: translate("~"%.4f"|format(random_x_end)~"vw, "~"%.4f"|format(random_yoyo_y)~"vh) scale("~"%.4f"|format(random_scale)~");  
+        }
+        to {
+            transform: translate("~"%.4f"|format(random_x_end_yoyo)~"vw, 100vh) scale("~"%.4f"|format(random_scale)~");
+        }
+        }"
+        -%}
+    {%- endfor -%}
+    "{{ ns.snow_output }}"
+{%- endmacro -%}
+{# ############################################# #}
+{# Macros pour générer les nuages #}
+{# https://codepen.io/V17h3m/pen/Xdxxgy #}
+{%- macro _cloud_html(num_clouds=15) -%}
+    {%- set num_clouds = num_clouds|int(20) -%}
+    "
+    {# Génère des éléments HTML pour chaque nuage avec une classe spécifique pour chaque nuage #}
+    {%- for i in range(num_clouds) -%}
+        <div class='cloud{{i}} layer{{_random(1,3)}}'></div>
+    {%- endfor -%}
+    "
+{%- endmacro -%}
+
+{# Macro pour générer la couleur des nuages en fonction de la luminosité #}
+{%- macro _cloud_rvb(dark=0) -%}
+    {%- set d=min(dark,2)|int(0)*50 -%}
+    {%- set s=min(dark,2)|int(0)*10+10 -%}
+    {%- set unicolor = max(0,min(255,_random(200 -d, 250-d, s)|int(0)+5)) -%}
+    {# Retourne la couleur RVB des nuages #}
+    {{- [unicolor,unicolor,unicolor]|join(',') -}}
+{%- endmacro -%}
+
+{# Macro pour générer le CSS des nuages avec animation #}
+{%- macro _cloud_css(num_clouds=15, complexity=7, dark=0, wind_speed=20) -%}
+    {%- set ns = namespace(cloud='',extra=[]) -%}
+    {%- set speed = 20/(wind_speed|float(0)+1)*60 -%} {# Calcul de la vitesse du vent (basé sur la vitesse du vent définie) #}
+    
+    {# Création de chaque nuage avec sa taille, position et animation de déplacement #}
+    {%- for n in range(0,num_clouds) -%}
+        {%- set color = _cloud_rvb(dark) -%}
+        {%- set h = _random(200,400,50) -%} {# Hauteur du nuage aléatoire #}
+        {%- set ns.cloud = ns.cloud ~ " .cloud"~(n|int(0)) ~"{
+            position: absolute;
+            width: "~ _random(h|int(200),1000,200) ~"px;
+            height: "~ h ~"px;
+            top: "~ _random(0,80,10) ~"%;
+            left: "~ _random(-1000,1000,200) ~"px;
+            background-image: 
+            radial-gradient(ellipse closest-side, rgba("~color~","~ _random(5,50,5)|int(0)/100 ~") 0%, rgba("~color~",0) "~ _random(50,70,10)|int(0) ~"%)"
+        -%}
+        
+        {# Ajoute des variations supplémentaires dans l'apparence du nuage (complexité) #}
+        {%- set ns.extra=[] -%}
+        {%- for c in range(0,complexity+2) -%}
+            {%- set type=['ellipse','circle']|random -%}
+            {%- set color = _cloud_rvb() -%}
+            {%- set ns.extra = ns.extra +["radial-gradient(ellipse at "~ _random(30,70,5) ~"%  "~ _random(30,70,5) ~"%, rgba("~color~","~ _random(10,40,5)|int(0)/100 ~") 0%, rgba("~color~",0) "~ _random(15,25,5) ~"%)"] -%}
+        {%- endfor -%}
+
+        {# Fusionne l'animation de défilement des nuages avec des variations de vitesse #}
+        {%- set ns.cloud = ns.cloud ~","~ ns.extra|join(',') ~ ";
+            animation: to-right "~ speed|float(0)*(range(60,140,20)|random)/100 ~"s linear infinite;
+            }"
+        -%}
+    {%- endfor -%}
+
+    {# Ajoute l'animation pour faire déplacer les nuages de gauche à droite #}
+    {%- set ns.cloud = ns.cloud ~ "
+    @keyframes to-right {
+        0% {transform: translateX(-10vw);}
+        100% {transform: translateX(150vw);}
+        filter: blur(1.5rem) brightness(0.9);
+        background-blend-mode: overlay;
+    }
+    " -%}
+    "{{ns.cloud}}"
+{%- endmacro -%}
+{# ############################################# #}
+
+{# Macro pour générer le brouillard #}
+{# https://codepen.io/BlogFire/pen/RwBdjvp #}
+{%- macro _fog_html() -%}
+    "
+    <div class='mist'>
+        <span style='--i: 1'></span>
+        <span style='--i: 3'></span>
+        <span style='--i: 16'></span>
+        <span style='--i: 5'></span>
+        <span style='--i: 13'></span>
+        <span style='--i: 6'></span>
+        <span style='--i: 7'></span>
+        <span style='--i: 10'></span>
+        <span style='--i: 8'></span>
+        <span style='--i: 7'></span>
+        <span style='--i: 10'></span>
+        <span style='--i: 8'></span>
+        <span style='--i: 17'></span>
+    </div>
+    "
+{%- endmacro -%}
+
+{# Macro pour générer le CSS du brouillard avec animation #}
+{%- macro _fog_css() -%}
+    "
+    .mist {
+    position: absolute;
+    bottom: 65%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    z-index: 1;
+    padding: 0;
+    }
+
+    .mist span {
+    display: block;
+    position: relative;
+    margin: 0 15px;
+    min-width: 35px;
+    height: 100px;
+    background: #ccc;
+    border-radius: 50%;
+    opacity: 0;
+    filter: blur(20px);
+    animation: mist 25s linear infinite;
+    animation-delay: calc(var(--i) * -0.75s);
+    }
+
+    @keyframes mist {
+    0% {
+        transform: translateX(0) scaleX(1);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translateX(-120px) translateY(-60px) scaleX(8) scaleY(2);
+        opacity: 0.5;
+    }
+
+    70% {
+        opacity: 0.25;
+    }
+
+    100% {
+        transform: translateX(150px) translateY(-120px) scaleX(16) scaleY(6);
+    }
+    }
+    "
+{%- endmacro -%}
+
+{# ############################################# #}
+{# Macros pour générer un éclair (lightning) #}
+{# ?? #}
+{%- macro _lightning_html() -%}
+    "
+    <div class='lightning'></div>
+    "
+{%- endmacro -%}
+
+{# Macro pour générer le CSS de l'éclair avec animation #}
+{%- macro _lightning_css() -%}
+    "
+    .lightning:before {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: #fff;
+        animation: lightning 4s linear infinite;
+        opacity: 0;
+    }
+
+    @keyframes lightning {
+        0% {
+        opacity: 0;
+        }
+        10% {
+        opacity: 0;
+        }
+        11% {
+        opacity: 1;
+        }
+        14% {
+        opacity: 0;
+        }
+        20% {
+        opacity: 0;
+        }
+        21% {
+        opacity: 1;
+        }
+        24% {
+        opacity: 0;
+        }
+        104% {
+        opacity: 0;
+        }
+    }
+    "
+{%- endmacro -%}
+
+{# ############################################# #}
+{# Macro qui génére le contenu HTML/CSS sous forme d'une chaine minimaliste #}
+{# layer = background ou foreground #}
+{# type = html ou css #}
+{%- macro generate_content(layer='foreground',type='html',demo=false) -%}
+    {# Récupère l'état météo actuel (en mode démo ou en temps réel) #}
+    {%- if demo -%}
+        {%- set current_weather = states('input_select.weather_condition_demo') -%}
+        {%- set speed = states('input_number.wind_speed_demo') -%}
+        {%- set below = states('binary_sensor.sun_below_horizon_demo')-%}
+    {%- else -%}
+        {%- set current_weather=states(_location)|replace("unknown","partlycloudy") -%}
+        {%- set speed = state_attr(_location,'wind_speed') -%}
+        {%- set below = is_state('sun.sun', 'below_horizon')-%}
+    {%- endif -%}
+
+    {# Gestion des conditions météo exceptionnelles comme la grêle #}
+    {%- if current_weather in ['exceptional','hail'] -%}
+        {%- set current_weather = 'rainy' -%} {# Si exceptionnel, on le remplace par la pluie #}
+    {%- elif current_weather in ['windy-variant'] -%}
+        {%- set current_weather = 'cloudy' -%}
+    {%- endif -%}
+    
+    {# Initialisation d'une variable de résultat vide #}
+    {%- set html = "" -%}
+    {%- set css = "" -%}
+    
+    {# Traitement spécifique pour le fond (background) #}
+    {%- if layer == "background" -%} 
+        {# Vérifie si c'est la nuit et génère des étoiles #}
+        {%- if below | bool -%}
+            {# Présence d'étoiles #}
+            {%- if 'stars' in conditions[current_weather].keys()|list -%}
+                {# Génération du contenu étoilé sépcifique #}
+                {%- set html = html ~ _stars_html(*conditions[current_weather]['stars']) -%}
+                {%- set css = css ~ _stars_css(*conditions[current_weather]['stars']) -%}
+            {%- else -%}
+                {# Contenu étoilé par défaut #}
+                {%- set html = html ~ _stars_html() -%}
+                {%- set css = css ~ _stars_css() -%}
+            {%- endif -%}
+        {%- endif -%}
+
+        {# Nuages pour temps partiellement nuageux/ensoleillé #}
+        {%- if 'clouds' in conditions[current_weather].keys()|list and current_weather in cloudbackground -%}
+            {%- set html = html ~ _cloud_html(conditions[current_weather]['clouds'][0]) -%}
+            {%- set css = css ~ _cloud_css(*conditions[current_weather]['clouds'], wind_speed = speed) -%}
+        {%- endif -%}
+        
+        {# Génère des éclairs si nécessaire #}
+        {%- if 'lightning' in conditions[current_weather].keys()|list -%}
+            {%- set html = html ~ _lightning_html() -%}
+            {%- set css = css ~ _lightning_css() -%}
+        {%- endif -%}
+    {# Traitement spécifique pour le premier plan (foreground) #}
+    {%- elif layer == "foreground" -%} 
+        {# Gère la pluie (gouttes) #}
+        {%- if 'drops' in conditions[current_weather].keys()|list -%}
+            {%- set html = html ~ _rain_html(conditions[current_weather]['drops']) -%}
+            {%- set css = css ~ _rain_css() -%}
+        {%- endif -%}
+
+        {# Gère les nuages pour d'autres conditions #}
+        {%- if 'clouds' in conditions[current_weather].keys()|list and not current_weather in cloudbackground -%}
+            {%- set html = html ~ _cloud_html(conditions[current_weather]['clouds'][0]) -%}
+            {%- set css = css ~ _cloud_css(*conditions[current_weather]['clouds'], wind_speed = speed) -%}
+        {%- endif -%}
+
+        {# Gère les flocons de neige (si nécessaire) #}
+        {%- if 'flakes' in conditions[current_weather].keys()|list -%}  
+            {%- set html = html ~ _snow_html(conditions[current_weather]['flakes']) -%}
+            {%- set css = css ~ _snow_css(conditions[current_weather]['flakes']) -%}
+        {%- endif -%}
+
+        {# Gère les éclairs pour le premier plan #}
+        {%- if 'lightning' in conditions[current_weather].keys()|list -%}  
+            {%- set html = html ~ _lightning_html() -%}
+            {%- set css = css ~ _lightning_css() -%}
+        {%- endif -%}
+
+        {# Gère le brouillard (fog) #}
+        {%- if 'fog' in conditions[current_weather].keys()|list -%}  
+            {%- set html = html ~ _fog_html() -%}
+            {%- set css = css ~ _fog_css() -%}
+        {%- endif -%}
+    {%- endif -%}
+
+    {# Nettoyage et jointure finale du contenu #}
+    {%- if type=='html'%}
+        {{' '.join(html.split())}}
+    {%- elif type=='css'%}
+        {{' '.join(css.split())}}
+    {%- endif -%}
+{%- endmacro -%}

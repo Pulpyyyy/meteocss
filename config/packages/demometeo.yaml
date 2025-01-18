@@ -1,0 +1,164 @@
+# Simulation d'entités pour les conditions météo
+input_select:
+  weather_condition_demo:
+    name: Conditions météo # Sélection de la condition météo simulée
+    options:
+      - lightning-rainy
+      - pouring
+      - rainy
+      - snowy-rainy
+      - lightning
+      - cloudy
+      - partlycloudy
+      - snowy
+      - sunny
+      - fog
+      - clear-night
+    initial: sunny # Condition météo initiale
+
+  moon_phase_demo:
+    name: Moon Phase # Simulation des phases de la lune
+    options:
+      - new_moon
+      - waxing_crescent
+      - first_quarter
+      - waxing_gibbous
+      - full_moon
+      - waning_gibbous
+      - last_quarter
+      - waning_crescent
+    initial: full_moon # Phase initiale de la lune
+
+# Simulation de valeurs numériques
+input_number:
+  wind_speed_demo:
+    name: Vitesse du vent # Simulation de la vitesse du vent
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: km/h
+    initial: 20 # Vitesse initiale
+
+  solar_azimuth_demo:
+    name: Azimut solaire # Simulation de l'azimut solaire
+    min: 0
+    max: 360
+    step: 1
+    unit_of_measurement: °
+    initial: 180 # Azimut initial
+
+  solar_elevation_demo:
+    name: Élévation solaire # Simulation de l'élévation solaire
+    min: -90
+    max: 90
+    step: 1
+    unit_of_measurement: °
+    initial: 45 # Élévation initiale
+
+  moon_azimuth_demo:
+    name: Azimut lunaire # Simulation de l'azimut de la lune
+    min: 0
+    max: 360
+    step: 1
+    unit_of_measurement: "°"
+    initial: 180 # Azimut initial
+
+  moon_altitude_demo:
+    name: Altitude lunaire # Simulation de l'altitude de la lune
+    min: -90
+    max: 90
+    step: 1
+    unit_of_measurement: "°"
+    initial: 45 # Altitude initiale
+
+  moon_parallactic_angle_demo:
+    name: Angle parallactique lunaire # Simulation de l'angle parallactique de la lune
+    min: 0
+    max: 360
+    step: 1
+    unit_of_measurement: °
+    initial: 180 # Angle initial
+
+# Simulation de booléens
+input_boolean:
+  rising_demo:
+    name: Aube/Crépuscule # Indique si c'est l'aube ou le crépuscule
+    initial: false # Valeur initiale
+
+  moon_up_demo:
+    name: Moon up/down # Indique si la lune est visible au-dessus de l'horizon
+    initial: false # Valeur initiale
+
+# Simulation de capteurs à l'aide de modèles
+template:
+  - binary_sensor:
+      - name: "Sun below Horizon demo" # Indique si le soleil est sous l'horizon
+        state: >-
+          {{ states('input_number.solar_elevation_demo')|float(0) <= 0 }}
+      - name: "Moon below Horizon demo" # Indique si la lune est sous l'horizon
+        state: >-
+          {{ states('input_number.moon_altitude_demo')|float(0) <= 0 }}
+
+  - sensor:
+      - name: "period_of_day_demo" # Simulation de la période du jour (nuit, aube, jour)
+        state: >-
+          {% set elevation = states('input_number.solar_elevation_demo')|int(0) %}
+          {{ elevation }}
+          {% set rising = states('input_boolean.rising_demo') %}
+          {%- if elevation|int(0) <= -12 -%}
+            night
+          {%- elif -12 < elevation|int(0) <= -6 -%}
+            {{ 'dawn' if rising else 'dusk' }}
+          {%- else -%}
+            day
+          {%- endif -%}
+
+      # Simulations de positions et opacités du soleil
+      - name: "Sun Top demo"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_top %}
+          {{ deg2rad_top(states('input_number.solar_azimuth_demo')|float(0), states('input_number.solar_elevation_demo')|float(0)) }}
+      - name: "Sun Left demo"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_left %}
+          {{ deg2rad_left(states('input_number.solar_azimuth_demo')|float(0), states('input_number.solar_elevation_demo')|float(0)) }}
+      - name: "Sun Top inverse demo"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_top %}
+          {{ deg2rad_top(states('input_number.solar_azimuth_demo')|float(0), states('input_number.solar_elevation_demo')|float(0), 180) }}
+      - name: "Sun Left inverse demo"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_left %}
+          {{ deg2rad_left(states('input_number.solar_azimuth_demo')|float(0), states('input_number.solar_elevation_demo')|float(0), 180) }}
+      - name: "Sun opacity demo"
+        state: |
+          {%- if is_state('binary_sensor.sun_below_horizon_demo','off') -%}
+          1
+          {%- else -%}
+          0
+          {%- endif -%}
+
+      # Simulations de positions et opacités de la lune
+      - name: "moon Top demo"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_top %}
+          {{ deg2rad_top(states('input_number.moon_azimuth_demo')|float(0), states('input_number.moon_altitude_demo')|float(0)) }}
+      - name: "moon Left demo"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_left %}
+          {{ deg2rad_left(states('input_number.moon_azimuth_demo')|float(0), states('input_number.moon_altitude_demo')|float(0)) }}
+      - name: "moon Top inverse demo"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_top %}
+          {{ deg2rad_top(states('input_number.moon_azimuth_demo')|float(0), states('input_number.moon_altitude_demo')|float(0), 180) }}
+      - name: "moon Left inverse demo"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_left %}
+          {{ deg2rad_left(states('input_number.moon_azimuth_demo')|float(0), states('input_number.moon_altitude_demo')|float(0), 180) }}
+      - name: "moon opacity demo"
+        state: |
+          {%- if is_state('binary_sensor.moon_below_horizon_demo','off') -%}
+          1
+          {%- else -%}
+          0
+          {%- endif -%}

@@ -1,0 +1,44 @@
+{%- set house_angle_deg = 25 -%}
+{# Définition de l'angle de la maison (house) en degrés par rapport au nord. Cet angle sera utilisé pour ajuster les calculs des angles d'azimut soleil/lune #}
+
+{%- set PI = 3.14159265359 -%}
+{# Définition de la constante PI pour convertir des degrés en radians #}
+
+{# Macro privée pour calculer la coordonnée "top" en fonction des angles d'azimut et d'élévation #}
+{%- macro _deg2rad_top(azimuth_deg, elevation_deg, house) -%}
+    {# Conversion de l'azimut de degrés en radians, en prenant en compte l'angle de la maison #}
+    {%- set azimuth_rad = (azimuth_deg - house) * PI / 180 -%}
+    {# Conversion de l'élévation de degrés en radians #}
+    {%- set elevation_rad = elevation_deg * PI / 180 -%}
+    {# Calcul du cosinus de l'azimut en radians #}
+    {%- set cos_azimuth = cos(azimuth_rad) -%}
+    {# Calcul du cosinus de l'élévation en radians #}
+    {%- set cos_elevation = cos(elevation_rad) -%}
+    {# Calcul de la coordonnée "top" en fonction des cosinus, résultat converti en entier (50% - 49% facteur de l'élevation pour avoir une valeur entre 1 et 99) #}
+    {{- (50 - 49 * cos_azimuth * cos_elevation) | int(0) -}}
+
+{%- endmacro -%}
+
+{# Macro privée pour calculer la coordonnée "left" en fonction des angles d'azimut et d'élévation #}
+{%- macro _deg2rad_left(azimuth_deg, elevation_deg, house) -%}
+    {# Conversion de l'azimut de degrés en radians, en prenant en compte l'angle de la maison #}
+    {%- set azimuth_rad = (azimuth_deg - house) * PI / 180 -%}
+    {# Conversion de l'élévation de degrés en radians #}
+    {%- set elevation_rad = elevation_deg * PI / 180 -%}
+    {# Calcul du sinus de l'azimut en radians #}
+    {%- set sin_azimuth = sin(azimuth_rad) -%}
+    {# Calcul du cosinus de l'élévation en radians #}
+    {%- set cos_elevation = cos(elevation_rad) -%}
+    {# Calcul de la coordonnée "left" en fonction du sinus et du cosinus, résultat converti en entier (50% - 49% facteur de l'élevation pour avoir une valeur entre 1 et 99) #}
+    {{- (50 + 49 * sin_azimuth * cos_elevation) | int(0) -}}
+{%- endmacro -%}
+
+{# Macro pour calculer la coordonnée "top" avec l'angle de la maison défini #}
+{%- macro deg2rad_top(azimuth_deg, elevation_deg, correction_deg = 0 ) -%}
+    {{- _deg2rad_top(azimuth_deg, elevation_deg, house_angle_deg + correction_deg) -}}
+{%- endmacro -%}
+
+{# Macro pour calculer la coordonnée "left" avec l'angle de la maison défini #}
+{%- macro deg2rad_left(azimuth_deg, elevation_deg, correction_deg = 0 ) -%}
+    {{- _deg2rad_left(azimuth_deg, elevation_deg, house_angle_deg + correction_deg) -}}
+{%- endmacro -%}

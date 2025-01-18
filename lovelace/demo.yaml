@@ -1,0 +1,105 @@
+type: vertical-stack
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: entities
+        entities:
+          - entity: input_select.weather_condition_demo
+            name: Conditions météo
+          - entity: input_number.wind_speed_demo
+            name: Vitesse du vent (km/h)
+      - type: entities
+        entities:
+          - entity: input_number.solar_azimuth_demo
+            name: Azimut solaire (°)
+          - entity: input_number.solar_elevation_demo
+            name: Élévation solaire (°)
+          - entity: input_boolean.rising_demo
+            name: Lever / Coucher
+          - entity: binary_sensor.sun_below_horizon_demo
+            name: Au dessous / Au dessus horizon
+      - type: entities
+        entities:
+          - entity: input_select.moon_phase_demo
+            name: Phase lunaire
+          - entity: input_number.moon_azimuth_demo
+            name: Azimut lunaire (°)
+          - entity: input_number.moon_altitude_demo
+            name: Élévation lunaire (°)
+          - entity: input_number.moon_parallactic_angle_demo
+            name: Parallaxe lunaire (°)
+  - type: custom:layout-card
+    layout_type: grid
+    align-items: center;
+    cards:
+      - type: picture-elements
+        view_layout:
+          grid-area: main
+        card_mod:
+          style: |-
+            {%- from 'meteo.jinja' import sky -%}
+            {{' '.join( sky(demo=true).split())|replace('"',"")}}
+        image: /local/images/empty.png
+        elements:
+          - type: custom:html-template-card
+            title: ""
+            ignore_line_breaks: true
+            picture_elements_mode: true
+            content: |-
+              {%- from 'meteo.jinja' import generate_content -%}
+                {{ generate_content('background','html',demo=true)|replace('"','') }}
+            card_mod:
+              style: |-
+                {%- from 'meteo.jinja' import generate_content -%}
+                  {{ generate_content('background','css',demo=true)|replace('"','') }}
+            style:
+              top: 50%
+              left: 50%
+              width: 100%
+              height: 100%
+          - type: image
+            image: /local/images/base.png
+            entity: weather.paris_1er_arrondissement
+            style:
+              top: 50%
+              left: 50%
+              width: 100%
+          - type: custom:html-template-card
+            title: ""
+            ignore_line_breaks: true
+            picture_elements_mode: true
+            content: >-
+              <img src="/local/images/sun/sun-48190.png" style="width:10%;
+              padding:0;margin:0;position:absolute;transform:translate(-50%,-50%);
+              left:{{ states('sensor.sun_left_demo') }}%; top:{{
+              states('sensor.sun_top_demo') }}%;
+              opacity:{{states('sensor.sun_opacity_demo') }}; "/> <img
+              src="/local/images/moon_phases/{{states('input_select.moon_phase_demo')}}.png"
+              style="width:1.5%;
+              padding:0;margin:0;position:absolute;transform:translate(-50%,-50%);
+              left:{{ states('sensor.moon_left_demo') }}%; top:{{
+              states('sensor.moon_top_demo') }}%;
+              opacity:{{states('sensor.moon_opacity_demo')}};
+              rotate:{{states('input_number.moon_parallactic_angle_demo')}}deg;
+              "/>
+            style:
+              top: 50%
+              left: 50%
+              width: 100%
+              height: 100%
+          - type: custom:html-template-card
+            title: ""
+            ignore_line_breaks: true
+            picture_elements_mode: true
+            content: |-
+              {%- from 'meteo.jinja' import generate_content -%}
+                {{ generate_content('foreground','html',demo=true)|replace('"','') }}
+            card_mod:
+              style: |-
+                {%- from 'meteo.jinja' import generate_content -%}
+                  {{ generate_content('foreground','css',demo=true)|replace('"','') }}
+            style:
+              top: 50%
+              left: 50%
+              width: 100%
+              height: 100%

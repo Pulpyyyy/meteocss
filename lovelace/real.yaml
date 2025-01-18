@@ -1,0 +1,70 @@
+type: picture-elements
+view_layout:
+  grid-area: main
+card_mod:
+  style: |-
+    {%- from 'meteo.jinja' import sky -%}
+    {{' '.join( sky().split())|replace('"',"")}}
+image: /local/images/empty.png
+elements:
+  - type: custom:html-template-card
+    title: ""
+    ignore_line_breaks: true
+    picture_elements_mode: true
+    content: |-
+      {%- from 'meteo.jinja' import generate_content -%}
+        {{ generate_content('background','html')|replace('"','') }}
+    card_mod:
+      style: |-
+        {%- from 'meteo.jinja' import generate_content -%}
+          {{ generate_content('background','css')|replace('"','') }}
+    style:
+      top: 50%
+      left: 50%
+      width: 100%
+      height: 100%
+  - type: image
+    image: /local/images/base.png
+    entity: weather.paris_1er_arrondissement
+    style:
+      top: 50%
+      left: 50%
+      width: 100%
+  - type: custom:html-template-card
+    title: ""
+    ignore_line_breaks: true
+    picture_elements_mode: true
+    content: >-
+        <img src="/local/images/sun/sun-48190.png" style="width:10%; left:{{
+        states('sensor.sun_left') }}%; top:{{ 
+        states('sensor.sun_top') }}%; opacity:{{
+        states('sensor.sun_opacity') }};
+        padding:0;margin:0;position:absolute;transform:translate(-50%,-50%);" />
+        <img src="/local/images/moon_phases/{{states('sensor.moon_phase')}}.png"
+        style="width:1.5%; left:{{ states('sensor.moon_left') }}%;
+        top:{{ states('sensor.moon_top') }}%; opacity:{{
+        states('sensor.moon_opacity') }}; padding:0;margin:0;position:absolute;
+        rotate:
+        {{state_attr('sensor.moon_api','moon_parallactic_angle')}}deg;transform:translate(-50%,-50%);"
+        /> 
+    style:
+      top: 50%
+      left: 50%
+      width: 100%
+      height: 100%
+  - type: custom:html-template-card
+    title: ""
+    ignore_line_breaks: true
+    picture_elements_mode: true
+    content: |-
+      {%- from 'meteo.jinja' import generate_content -%}
+        {{ generate_content('foreground','html')|replace('"','') }}
+    card_mod:
+      style: |-
+        {%- from 'meteo.jinja' import generate_content -%}
+          {{ generate_content('foreground','css')|replace('"','') }}
+    style:
+      top: 50%
+      left: 50%
+      width: 100%
+      height: 100%

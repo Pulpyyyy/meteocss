@@ -1,0 +1,86 @@
+
+sensor:
+  - platform: rest
+    resource: https://api.ipgeolocation.io/astronomy
+    name: Moon API
+    scan_interval: 1200
+    params:
+      apiKey: !secret ipgeolocation_api
+      latitude: !secret entitie_zone_home_latitude
+      longitude: !secret entitie_zone_home_longitude
+    json_attributes:
+      - date
+      - current_time
+      - moonrise
+      - moon_status
+      - moon_altitude
+      - moon_distance
+      - moon_azimuth
+      - moon_parallactic_angle
+    value_template: >
+      {% if value_json.moon_altitude > 0 %}
+        up
+      {% else %}
+        down
+      {% endif %}
+    icon: >
+      {{ state_attr('sensor.moon', 'icon') }}
+template:
+  - sensor:
+      - name: "period_of_day"
+        state: >-
+          {% set elevation = state_attr('sun.sun', 'elevation') %}
+          {% set rising = state_attr('sun.sun', 'rising') %}
+          {%- if elevation <= -12 -%}
+            night
+          {%- elif -12 < elevation <= -6 -%}
+            {{ 'dawn' if rising else 'dusk' }}
+          {%- else -%}
+            day
+          {%- endif -%}
+      - name: "Sun Top"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_top %}
+          {{ deg2rad_top(state_attr('sun.sun', 'azimuth'), state_attr('sun.sun', 'elevation')) }}
+      - name: "Sun Left"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_left %}
+          {{ deg2rad_left(state_attr('sun.sun', 'azimuth'), state_attr('sun.sun', 'elevation')) }}
+      - name: "Sun Top inverse"
+        state: >
+          {% from 'rotation.jinja' import deg2rad_top %}
+          {{ deg2rad_top(state_attr('sun.sun', 'azimuth'), state_attr('sun.sun', 'elevation'), 180) }}
+      - name: "Sun Left inverse"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_left %}
+          {{ deg2rad_left(state_attr('sun.sun', 'azimuth'), state_attr('sun.sun', 'elevation'), 180) }}
+      - name: "Sun opacity"
+        state: |
+          {%- if states('sun.sun') == 'above_horizon' -%}
+          1
+          {%- else -%}
+          0
+          {%- endif -%}
+      - name: "moon Top"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_top %}
+          {{ deg2rad_top(state_attr('sensor.moon_api', 'moon_azimuth'), state_attr('sensor.moon_api', 'moon_altitude')) }}
+      - name: "moon Left"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_left %}
+          {{ deg2rad_left(state_attr('sensor.moon_api', 'moon_azimuth'), state_attr('sensor.moon_api', 'moon_altitude')) }}
+      - name: "moon Top inverse"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_top %}
+          {{ deg2rad_top(state_attr('sensor.moon_api', 'moon_azimuth'), state_attr('sensor.moon_api', 'moon_altitude'), 180) }}
+      - name: "moon Left inverse"
+        state: >-
+          {% from 'rotation.jinja' import deg2rad_left %}
+          {{ deg2rad_left(state_attr('sensor.moon_api', 'moon_azimuth'), state_attr('sensor.moon_api', 'moon_altitude'), 180) }}
+      - name: "moon opacity"
+        state: |
+          {%- if states('sensor.moon_api') == 'up' -%}
+          1
+          {%- else -%}
+          0
+          {%- endif -%}
