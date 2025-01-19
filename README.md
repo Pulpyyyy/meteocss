@@ -193,3 +193,5 @@ Après la carte `foreground` on ajoute toutes les cartes qui nécessitent une in
 ![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/raining.png)
 ![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/snowing.png)
 ![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/sunny.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/sunset.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/sunrise.png)
