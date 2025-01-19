@@ -92,11 +92,37 @@ homeassistant:
 Quand tout est configuré, et que HA a bien redémarré, vous deviez pouvoir jouer avec le démonstrateur.
 
 
-Quand tout est configuré, et que HA a bien redémarré, vous deviez pouvoir jouer avec le démonstrateur.
-
 Pour utiliser le fonctionnement réel, il faut  
 * Remplacer `weather.paris_1er_arrondissement` dans les premières lignes code de `meteo.jinja` et dans la carte ci-dessous par votre propre entité
 * Repartir de la carte `/lovelace/real.yaml` pour exploiter les entités réelles.
 * Et compléter en plaçant les éléments de votre choix entre le foreground et le background, ou au 1er plan
 
 Et compléter en plaçant les éléments de votre choix entre le foreground et le background, ou au 1er plan. Le placement au premier plan est primordial pour le fonctionnement de tap_action.
+
+## Utilisation
+
+### 1. `generate_content`
+
+#### Description
+Cette fonction est responsable de générer les différentes couches de contenu pour l'affichage (arrière-plan ou premier plan). Elle appelle dynamiquement les macros nécessaires en fonction des paramètres.
+
+#### Paramètres
+
+| Nom        | Type    | Valeurs possibles     | Description                                                   |
+|------------|---------|-----------------------|---------------------------------------------------------------|
+| `layer`    | string  | `background`, `foreground` | Spécifie si le contenu concerne le fond ou le premier plan.    |
+| `type`     | string  | `html`, `css`          | Spécifie si l'on génère le HTML ou le CSS.                     |
+| `demo`     | bool    | `true`, `false`        | Indique si les paramètres par défaut sont utilisés pour la démo. |
+
+#### Exemple d'appel
+
+- **Générer une scène complète (HTML et CSS) pour l'arrière-plan, en mode démo :**
+
+```
+{%- from 'meteo.jinja' import generate_content -%}
+{{ generate_content(layer='background', type='html', demo=true) }}
+```
+Générer une scène de premier plan avec des conditions réelles :
+```
+{%- from 'meteo.jinja' import generate_content -%}
+{{ generate_content(layer='foreground', type='css') }}
