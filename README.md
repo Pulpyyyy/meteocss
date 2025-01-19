@@ -101,9 +101,8 @@ Et compléter en plaçant les éléments de votre choix entre le foreground et l
 
 ## Mise à jour
 
-Depuis la version 2.0.0, le fichier de configuration `meteo_settings.jinja` est séparé des fonctions de génération dans `meteo.jinja`
-Sauf mention contraire, le fichier `meteo_settings.jinja` est à conserver pour garder vos paramétrage personnels intacts.
-A l'inversion, le fichier `meteo.jinja` est à remplacer par la nouvelle version
+Depuis la version 2.0.0, le fichier de configuration meteo_settings.jinja est séparé des fonctions de génération dans meteo.jinja.
+Sauf mention contraire, le fichier meteo_settings.jinja est à conserver pour garder vos paramétrage personnels intacts. Mais le fichier meteo.jinja est à remplacer par la nouvelle version
 
 ## Utilisation
 
