@@ -184,7 +184,7 @@ Entre ces deux parties `background` et `foreground` on ajoute toutes les cartes 
 
 Après la carte `foreground` on ajoute toutes les cartes qui nécessitent une interaction (fonction  tap action). C'est indispensable afin qu'elles puissent réagirr au clics.
 
-## Examples
+## Exemples
 ![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/fog.png)
 ![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/lightning-raining.png)
 ![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/night.png)
