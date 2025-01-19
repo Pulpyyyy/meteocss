@@ -57,6 +57,9 @@ J'ai tenté de rendre l'installation simple, mais c'est un gros morceau quand m�
 Prenez le temps de bien lire l'ensemble du sujet ;)
 Toutes les étapes y sont décrites pour y arriver seul....
 
+Un archive zip de la dernière version des fichiers (stable) est disponible ici:
+https://github.com/Pulpyyyy/meteocss/releases
+
 Il faut installer les élément suivants 
 * HTML Jinja2 Template card - https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card
 * layout-card - https://github.com/thomasloven/lovelace-layout-card
@@ -79,16 +82,21 @@ homeassistant:
     cssmeteo: !include packages/cssmeteo.yaml
 ```
 
-* Copiez le fichier de [demometeo.yaml](https://github.com/Pulpyyyy/meteocss/blob/main/packages/demometeo.yaml) (pour créer les entités de la démo) dans le répertoire `/config/packages/` de votre home assistant.
-* Copiez le fichier de [cssmeteo.yaml](https://github.com/Pulpyyyy/meteocss/blob/main/packages/cssmeteo.yaml) (pour créer les vraies entités) dans le répertoire `/config/packages/` de votre home assistant.
-* Créez un dashboard et copiez le contenu de la [carte lovelace de démonstration](https://github.com/Pulpyyyy/meteocss/blob/main/lovelace/demo.yaml).
-* Ajoutez les libraires jinja [rotation.jinja](https://github.com/Pulpyyyy/meteocss/blob/main/config/custom_templates/rotation.jinja) et [meteo.jinja](https://github.com/Pulpyyyy/meteocss/blob/main/config/custom_templates/meteo.jinja) dans le répertoire `/config/custom_templates/` de votre home assistant. S'il n'existe pas, créez le !
-* Importez toutes les [ressources (type images)](https://github.com/Pulpyyyy/meteocss/tree/main/config/www/images) dans votre `/config/www/images`. S'il n'existe pas, créez le !
+* Copiez le fichier de `/packages/demometeo.yaml` (pour créer les entités de la démo) dans le répertoire `/config/packages/` de votre home assistant.
+* Copiez le fichier de `/packages/cssmeteo.yaml` (pour créer les vraies entités) dans le répertoire `/config/packages/` de votre home assistant.
+* Créez un dashboard et copiez le contenu de la carte lovelace de démonstration `/lovelace/demo.yaml`.
+* Ajoutez les libraires jinja `config/custom_templates/rotation.jinja` et `/config/custom_templates/meteo.jinja` dans le répertoire `/config/custom_templates/` de votre home assistant. S'il n'existe pas, créez le !
+* Importez toutes les ressources (type images) dans votre `/config/www/images`. S'il n'existe pas, créez le !
 
   
 Quand tout est configuré, et que HA a bien redémarré, vous deviez pouvoir jouer avec le démonstrateur.
 
+
+Quand tout est configuré, et que HA a bien redémarré, vous deviez pouvoir jouer avec le démonstrateur.
+
 Pour utiliser le fonctionnement réel, il faut  
 * Remplacer `weather.paris_1er_arrondissement` dans les premières lignes code de `meteo.jinja` et dans la carte ci-dessous par votre propre entité
-* Repartir de la [carte suivante](https://github.com/Pulpyyyy/meteocss/blob/main/lovelace/real.yaml) pour exploiter les entités réelles.
+* Repartir de la carte `/lovelace/real.yaml` pour exploiter les entités réelles.
 * Et compléter en plaçant les éléments de votre choix entre le foreground et le background, ou au 1er plan
+
+Et compléter en plaçant les éléments de votre choix entre le foreground et le background, ou au 1er plan. Le placement au premier plan est primordial pour le fonctionnement de tap_action.
