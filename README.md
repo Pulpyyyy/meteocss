@@ -101,7 +101,26 @@ Et compléter en plaçant les éléments de votre choix entre le foreground et l
 
 ## Utilisation
 
-### 1. `generate_content`
+### 1. `sky()`
+
+#### Description#
+
+La fonction `sky` est utilisée pour générer dynamiquement des effets visuels liés à la météo (comme le ciel et les conditions météorologiques associées). Elle peut être appelée avec un argument `demo=true` pour générer un exemple statique avec des paramètres par défaut. 
+Typiquement cette partie de la carte est la toute première d'une carte ``picture-elements`.
+Les autres élements de la carte se positionnent après pour apparaitre par dessus.
+
+### Exemple de code :
+```
+      - type: picture-elements
+        view_layout:
+          grid-area: main
+        card_mod:
+          style: |-
+            {%- from 'meteo.jinja' import sky -%}
+            {{' '.join( sky(demo=true).split())|replace('"',"")}}
+```
+
+### 2. `generate_content()`
 
 #### Description
 Cette fonction est responsable de générer les différentes couches de contenu pour l'affichage (arrière-plan ou premier plan). Elle appelle dynamiquement les macros nécessaires en fonction des paramètres.
@@ -119,10 +138,49 @@ Cette fonction est responsable de générer les différentes couches de contenu 
 - **Générer une scène complète (HTML et CSS) pour l'arrière-plan, en mode démo :**
 
 ```
-{%- from 'meteo.jinja' import generate_content -%}
-{{ generate_content(layer='background', type='html', demo=true) }}
+          - type: custom:html-template-card
+            title: ""
+            ignore_line_breaks: true
+            picture_elements_mode: true
+            content: |-
+              {%- from 'meteo.jinja' import generate_content -%}
+                {{ generate_content('background','html',demo=true)|replace('"','') }}
+            card_mod:
+              style: |-
+                {%- from 'meteo.jinja' import generate_content -%}
+                  {{ generate_content('background','css',demo=true)|replace('"','') }}
+            style:
+              top: 50%
+              left: 50%
+              width: 100%
+              height: 100%
 ```
-Générer une scène de premier plan avec des conditions réelles :
+**Générer une scène de premier plan avec des conditions réelles :**
 ```
-{%- from 'meteo.jinja' import generate_content -%}
-{{ generate_content(layer='foreground', type='css') }}
+          - type: custom:html-template-card
+            title: ""
+            ignore_line_breaks: true
+            picture_elements_mode: true
+            content: |-
+              {%- from 'meteo.jinja' import generate_content -%}
+                {{ generate_content('foreground','html')|replace('"','') }}
+            card_mod:
+              style: |-
+                {%- from 'meteo.jinja' import generate_content -%}
+                  {{ generate_content('foreground','css')|replace('"','') }}
+            style:
+              top: 50%
+              left: 50%
+              width: 100%
+              height: 100%
+```
+Ces deux parties de cartent s'ajoute principalement **juste après** le bloc `sky`
+
+### 3. `cartes intermédiaires`
+
+Entre ces deux parties `background` et `foreground` on ajoute toutes les cartes qui ne nécessitent pas d'interaction (fonction  tap action)
+
+### 3. `cartes avec interaction`
+
+Après la carte `foreground` on ajoute toutes les cartes qui nécessitent une interaction (fonction  tap action). C'est indispensable afin qu'elles puissent réagirr au clics.
+
