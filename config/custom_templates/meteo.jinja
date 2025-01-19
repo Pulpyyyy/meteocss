@@ -677,10 +677,3 @@
         {{' '.join(css.split())}}
     {%- endif -%}
 {%- endmacro -%}
-    {# Nettoyage et jointure finale du contenu #}
-    {%- if type=='html'%}
-        {{' '.join(html.split())}}
-    {%- elif type=='css'%}
-        {{' '.join(css.split())}}
-    {%- endif -%}
-{%- endmacro -%}
