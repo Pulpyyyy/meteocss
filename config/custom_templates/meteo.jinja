@@ -1,22 +1,22 @@
 {# Définit l'entité météo spécifique à utiliser pour récupérer les données météo #}
-{%- set _location = 'weather.paris_1er_arrondissement' -%}
+{%- set _location = 'weather.paris_1er_arrondissement' -%}{# Définit l'entité météo spécifique à utiliser pour récupérer les données météo #}
 
 {# Ces variables définissent des dégradés de couleurs pour représenter différentes intensités de la nuit #}
-{%- set clear_night='#25259c, #2a2a60, #0f0344' -%}      {# - clear_night : Palette pour une nuit claire avec des tons bleus profonds #}
-{%- set normal_night='#272762, #302c2c' -%}              {# - normal_night : Palette pour une nuit standard avec des nuances sombres #}
-{%- set dark_night ='#0e0e54, #000000' -%}               {# - dark_night : Palette pour une nuit très sombre avec des tons très foncés #}
+{%- set clear_night='#25259c, #2a2a60, #0f0344' -%}      {# - clear_night : Gradiant CSS pour une nuit claire avec des tons bleus profonds #}
+{%- set normal_night='#272762, #302c2c' -%}              {# - normal_night : Gradiant CSS pour une nuit standard avec des nuances sombres #}
+{%- set dark_night ='#0e0e54, #000000' -%}               {# - dark_night : Gradiant CSS pour une nuit très sombre avec des tons très foncés #}
 
 {# Ces variables définissent des dégradés de couleurs pour un type de journée spécifique #}
-{%- set normal_day='#B9DFFF, #4BA0DB, #004390' -%}      {# - normal_day : Journée standard avec des tons bleus clairs #}
-{%- set rainy_day='#B9DFFF, #C1CBD0 , #91A6B0' -%}      {# - rainy_day : Journée pluvieuse avec des couleurs grises et bleutées #}
-{%- set dark_day='#B9DFFF , #2F4F4F , #708090' -%}      {# - dark_day : Journée sombre avec des tons plus foncés #}
-{%- set snowy_day='#B0E2FF , #AAAAAA , #D3D3D3' -%}     {# - snowy_day : Journée enneigée avec des tons blancs et gris #}
-{%- set grey_day='#B4C4CB, #A4A6A8, #94A9c7' -%}        {# - grey_day : Journée grise avec des nuances de gris et de bleu #}
+{%- set normal_day='#B9DFFF, #4BA0DB, #004390' -%}      {# - normal_day : Journée standard avec un gradiant CSS de bleus clairs #}
+{%- set rainy_day='#B9DFFF, #C1CBD0 , #91A6B0' -%}      {# - rainy_day : Journée pluvieuse avec un gradiant CSS de couleurs grises et bleutées #}
+{%- set dark_day='#B9DFFF , #2F4F4F , #708090' -%}      {# - dark_day : Journée sombre avec un gradiant CSS de tons plus foncés #}
+{%- set snowy_day='#B0E2FF , #AAAAAA , #D3D3D3' -%}     {# - snowy_day : Journée enneigée avec un gradiant CSS de tons blancs et gris #}
+{%- set grey_day='#B4C4CB, #A4A6A8, #94A9c7' -%}        {# - grey_day : Journée grise avec un gradiant CSS de gris et de bleu #}
 
 {# Dégradés de couleurs pour le lever et le coucher du soleil #}
 {# Définit des transitions de couleurs pour simuler les moments de transition du jour #}
-{%- set sunrise_day='#FFF5C3 5%, #FFD966 20%, #FFA64D 40%, #FF7F50 60%, #FF4D4D 80%, #5D0000 100%' -%}     {# - sunrise_day : Palette de couleurs du lever du soleil #}
-{%- set sunset_day='#FEFEFFCC 5%, #ECFF00 10%, #FD3229 20%, #F30000 30%, #5D0000 45%, #004390 100%' -%}    {# - sunset_day : Palette de couleurs du coucher du soleil #}
+{%- set sunrise_day='#FFF5C3 5%, #FFD966 20%, #FFA64D 40%, #FF7F50 60%, #FF4D4D 80%, #5D0000 100%' -%}     {# - sunrise_day : Gradiant CSS de couleurs du lever du soleil #}
+{%- set sunset_day='#FEFEFFCC 5%, #ECFF00 10%, #FD3229 20%, #F30000 30%, #5D0000 45%, #004390 100%' -%}    {# - sunset_day : Gradiant CSS de couleurs du coucher du soleil #}
 
 {# Configuration de la densité des nuages, permettant de paramétrer l'apparence des nuages selon différentes conditions #}
 {# Chaque liste contient [nombre de nuages, taille des nuages, variation du gris clair/0 à foncé/3] #}
@@ -670,6 +670,13 @@
         {%- endif -%}
     {%- endif -%}
 
+    {# Nettoyage et jointure finale du contenu #}
+    {%- if type=='html'%}
+        {{' '.join(html.split())}}
+    {%- elif type=='css'%}
+        {{' '.join(css.split())}}
+    {%- endif -%}
+{%- endmacro -%}
     {# Nettoyage et jointure finale du contenu #}
     {%- if type=='html'%}
         {{' '.join(html.split())}}
