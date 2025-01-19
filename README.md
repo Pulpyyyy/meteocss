@@ -85,7 +85,7 @@ homeassistant:
 * Copiez le fichier de `/packages/demometeo.yaml` (pour créer les entités de la démo) dans le répertoire `/config/packages/` de votre home assistant.
 * Copiez le fichier de `/packages/cssmeteo.yaml` (pour créer les vraies entités) dans le répertoire `/config/packages/` de votre home assistant.
 * Créez un dashboard et copiez le contenu de la carte lovelace de démonstration `/lovelace/demo.yaml`.
-* Ajoutez les libraires jinja `config/custom_templates/rotation.jinja` et `/config/custom_templates/meteo.jinja` dans le répertoire `/config/custom_templates/` de votre home assistant. S'il n'existe pas, créez le !
+* Ajoutez les libraires jinja `config/custom_templates/rotation.jinja`, `/config/custom_templates/meteo.jinja` et `/config/custom_templates/meteo_settings.jinja` dans le répertoire `/config/custom_templates/` de votre home assistant. Si le répertoire n'existe pas, créez le !
 * Importez toutes les ressources (type images) dans votre `/config/www/images`. S'il n'existe pas, créez le !
 
   
@@ -93,11 +93,17 @@ Quand tout est configuré, et que HA a bien redémarré, vous deviez pouvoir jou
 
 
 Pour utiliser le fonctionnement réel, il faut  
-* Remplacer `weather.paris_1er_arrondissement` dans les premières lignes code de `meteo.jinja` et dans la carte ci-dessous par votre propre entité
+* Remplacer `weather.paris_1er_arrondissement` dans les premières lignes code de `meteo_settings.jinja` et dans la carte ci-dessous par votre propre entité
 * Repartir de la carte `/lovelace/real.yaml` pour exploiter les entités réelles.
 * Et compléter en plaçant les éléments de votre choix entre le foreground et le background, ou au 1er plan
 
 Et compléter en plaçant les éléments de votre choix entre le foreground et le background, ou au 1er plan. Le placement au premier plan est primordial pour le fonctionnement de tap_action.
+
+## Mise à jour
+
+Depuis la version 2.0.0, le fichier de configuration `meteo_settings.jinja` est séparé des fonctions de génération dans `meteo.jinja`
+Sauf mention contraire, le fichier `meteo_settings.jinja` est à conserver pour garder vos paramétrage personnels intacts.
+A l'inversion, le fichier `meteo.jinja` est à remplacer par la nouvelle version
 
 ## Utilisation
 
