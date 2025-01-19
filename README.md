@@ -1,9 +1,9 @@
-Maintenant que le concours est terminé, il est temps de partager un petit truc que je bricole depuis plusieurs mois
-
 ### **Introduction**
 
 https://streamable.com/uurnef
-(lien vidéo) `https://streamable.com/uurnef`
+
+- [Lien vidéo](https://streamable.com/uurnef)
+- [Exemples images](https://github.com/Pulpyyyy/meteocss/edit/main/README.md#examples)
 
 Ce petit bout de code propose une solution innovante pour créer des animations météorologiques dynamiques, entièrement paramétrables et générées automatiquement en HTML/CSS. Grâce à l’utilisation de macros, il est possible d’obtenir des effets visuels complexes et réalistes adaptés aux conditions météorologiques en temps réel, le tout avec un code optimisé et réutilisable.
 
@@ -184,3 +184,12 @@ Entre ces deux parties `background` et `foreground` on ajoute toutes les cartes 
 
 Après la carte `foreground` on ajoute toutes les cartes qui nécessitent une interaction (fonction  tap action). C'est indispensable afin qu'elles puissent réagirr au clics.
 
+## Examples
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/fog.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/lightning-raining.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/night.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/night2.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/pouring.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/raining.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/snowing.png)
+![Logo](https://github.com/Pulpyyyy/meteocss/blob/main/images/sunny.png)
