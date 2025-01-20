@@ -46,9 +46,9 @@
                 {%- else -%}
                     {%- if elevation |int(0) < 5 -%}
                         {%- if rising | bool -%}
-                            {{sunrise_day}}
+                            {{config.sunrise_day}}
                         {%- else -%}
-                            {{sunset_day}}
+                            {{config.sunset_day}}
                         {%- endif -%}
                     {%- else -%}
                         {{ config.conditions[current_weather]['day_sky'] }}
@@ -344,7 +344,7 @@
 {%- endmacro -%}
 
 {# Macro pour générer le CSS du brouillard avec animation #}
-{%- macro _fog_css() -%}
+{%- macro _fog_css(color_fog='#C0C0C0') -%}
     "
     .mist {
     position: absolute;
@@ -529,7 +529,7 @@
         {# Gère le brouillard (fog) #}
         {%- if 'fog' in config.conditions[current_weather].keys()|list -%}  
             {%- set html = html ~ _fog_html(config.conditions[current_weather]['fog']) -%}
-            {%- set css = css ~ _fog_css() -%}
+            {%- set css = css ~ _fog_css(config.conditions[current_weather]['fog']) -%}
         {%- endif -%}
     {%- endif -%}
 
