@@ -32,8 +32,6 @@
     "
         ha-card {
             margin-top: {{ margin_top }};
-            min-height: 75em;
-            max-height: 75em;
             width: 100%;
             top: 0;
             left: 0;
@@ -490,7 +488,7 @@
         {%- endif -%}
 
         {# Nuages pour temps partiellement nuageux/ensoleillé #}
-        {%- if 'clouds' in config.conditions[current_weather].keys()|list and current_weather in force2background -%}
+        {%- if 'clouds' in config.conditions[current_weather].keys()|list and current_weather in config.force2background -%}
             {%- set html = html ~ _cloud_html(config.conditions[current_weather]['clouds'][0]) -%}
             {%- set css = css ~ _cloud_css(*config.conditions[current_weather]['clouds'], wind_speed = speed) -%}
         {%- endif -%}
@@ -515,7 +513,7 @@
         {%- endif -%}
 
         {# Gère les nuages pour d'autres conditions #}
-        {%- if 'clouds' in config.conditions[current_weather].keys()|list and not current_weather in force2background -%}
+        {%- if 'clouds' in config.conditions[current_weather].keys()|list and not current_weather in config.force2background -%}
             {%- set html = html ~ _cloud_html(config.conditions[current_weather]['clouds'][0]) -%}
             {%- set css = css ~ _cloud_css(*config.conditions[current_weather]['clouds'], wind_speed = speed) -%}
         {%- endif -%}
