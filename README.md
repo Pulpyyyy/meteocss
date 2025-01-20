@@ -181,11 +181,16 @@ Cette fonction est responsable de générer les différentes couches de contenu 
 ```
 Ces deux parties de cartent s'ajoute principalement **juste après** le bloc `sky`
 
-### 3. `cartes intermédiaires`
+### ". `carte soleil/lune`
+
+On trouve tout de suite, la carte qui affiche le soleil et la lune. Tant que la carte est incluse, elle calcule les positions du soleil et de la lune. Et si l’élevation est positive, les élements sont visibles.
+Pour ne pas afficher ces élements soleil et lune, il suffit de ne pas inclure la carte.
+
+### 4. `cartes intermédiaires`
 
 Entre ces deux parties `background` et `foreground` on ajoute toutes les cartes qui ne nécessitent pas d'interaction (fonction  tap action)
 
-### 3. `cartes avec interaction`
+### 5. `cartes avec interaction`
 
 Après la carte `foreground` on ajoute toutes les cartes qui nécessitent une interaction (fonction  tap action). C'est indispensable afin qu'elles puissent réagirr au clics.
 
