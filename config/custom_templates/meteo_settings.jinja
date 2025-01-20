@@ -8,7 +8,8 @@
 
 {# Ces variables définissent des dégradés de couleurs pour un type de journée spécifique #}
 {%- set normal_day='#B9DFFF, #4BA0DB, #004390' -%}      {# - normal_day : Journée standard avec un gradiant CSS de bleus clairs #}
-{%- set rainy_day='#B9DFFF, #C1CBD0 , #91A6B0' -%}      {# - rainy_day : Journée pluvieuse avec un gradiant CSS de couleurs grises et bleutées #}
+{%- set intermediate_day='#B9DFFF, #B0C4C8, #7A9BA0' -%}{# - normal_day : Journée grise avec un gradiant CSS de bleus/gris clairs #}
+{%- set rainy_day='#B9DFFF, #C1CBD0 , #91A6B0' -%}      {# - intermediate_day : Journée pluvieuse avec un gradiant CSS de couleurs grises et bleutées #}
 {%- set dark_day='#B9DFFF , #2F4F4F , #708090' -%}      {# - dark_day : Journée sombre avec un gradiant CSS de tons plus foncés #}
 {%- set snowy_day='#B0E2FF , #AAAAAA , #D3D3D3' -%}     {# - snowy_day : Journée enneigée avec un gradiant CSS de tons blancs et gris #}
 {%- set grey_day='#B4C4CB, #A4A6A8, #94A9c7' -%}        {# - grey_day : Journée grise avec un gradiant CSS de gris et de bleu #}
@@ -104,7 +105,7 @@
     
     'partlycloudy': {
         'clouds': low_clouds,
-        'day_sky': normal_day,
+        'day_sky': intermediate_day,
         'night_sky': normal_night
     },
     
@@ -117,7 +118,7 @@
     
     'sunny': {
         'clouds': minimal_clouds,
-        'night_sky': snowy_day,
+        'night_sky': normal_night,
         'day_sky': normal_day
     },
     
