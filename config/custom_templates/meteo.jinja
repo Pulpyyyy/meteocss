@@ -362,7 +362,7 @@
     margin: 0 15px;
     min-width: 200px;
     height: 120px;
-    background: {{ config.color_fog }};
+    background: {{ color_fog }};
     border-radius: 50%;
     opacity: 0;
     filter: blur(20px);
@@ -528,8 +528,8 @@
 
         {# Gère le brouillard (fog) #}
         {%- if 'fog' in config.conditions[current_weather].keys()|list -%}  
-            {%- set html = html ~ _fog_html(config.conditions[current_weather]['fog']) -%}
-            {%- set css = css ~ _fog_css(config.conditions[current_weather]['fog']) -%}
+            {%- set html = html ~ _fog_html(config.conditions[current_weather]['fog'][0]) -%}
+            {%- set css = css ~ _fog_css(config.conditions[current_weather]['fog'][1]) -%}
         {%- endif -%}
     {%- endif -%}
 

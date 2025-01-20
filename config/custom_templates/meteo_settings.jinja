@@ -41,13 +41,13 @@
 {%- set normal_flakes=200 -%}           {# - normal_flakes : Chutes de neige standard avec une intensité moyenne #}
 {%- set low_flakes=80 -%}               {# - low_flakes : Faibles chutes de neige avec une faible densité de flocons #}
 
-{# Configuration de l'intensité et la couleur du brouillard #}
-{%- set normal_fog = 6 -%}               {# - normal_fog : Brouillard standard avec une intensité moyenne #}
-{%- set color_fog = "#C0C0C0" -%}         {# - color_fog : Couleur du brouillard #}
+{# Configuration du brouillard #}
+{# Chaque liste contient [intensité, couleur] #}
+{%- set normal_fog = [ 6, '#C0C0C0' ] -%}         {# - normal_fog : Intensité et couleur du brouillard normal #}
 
 {# Configuration de toutes les conditions météo #}
-{# Dictionnaire détaillant chaque condition météorologique et ses propriétés visuelles #}
-{# Chaque condition peut inclure :
+{# Dictionnaire détaillant chaque condition météorologique possibles sous HA et ses propriétés visuelles auxquelles s'ajoutent 2 conditions particulières sunrise_day et sunset_day #}
+{# Chaque condition peut inclure les configurations suivantes:
 #  - clouds : Configuration des nuages
 #  - day_sky : Palette de couleurs pour le jour
 #  - night_sky : Palette de couleurs pour la nuit
