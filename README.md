@@ -181,7 +181,7 @@ Cette fonction est responsable de générer les différentes couches de contenu 
 ```
 Ces deux parties de cartent s'ajoute principalement **juste après** le bloc `sky`
 
-### ". `carte soleil/lune`
+### 3. `carte soleil/lune`
 
 On trouve tout de suite, la carte qui affiche le soleil et la lune. Tant que la carte est incluse, elle calcule les positions du soleil et de la lune. Et si l’élevation est positive, les élements sont visibles.
 Pour ne pas afficher ces élements soleil et lune, il suffit de ne pas inclure la carte.
