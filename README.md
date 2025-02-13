@@ -56,6 +56,7 @@ Le projet utilise des techniques avancées de CSS pour offrir des effets esthét
 J'ai tenté de rendre l'installation simple, mais c'est un gros morceau quand même...
 Prenez le temps de bien lire l'ensemble du sujet ;)
 Toutes les étapes y sont décrites pour y arriver seul....
+L'installation est désormais possible via HACS, en ajoute ce dépot dans la liste des dépots personnalisés (catégorie modèle)
 
 Un archive zip de la dernière version des fichiers (stable) est disponible ici:
 https://github.com/Pulpyyyy/meteocss/releases
