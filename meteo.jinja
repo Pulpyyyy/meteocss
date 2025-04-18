@@ -28,6 +28,8 @@
         {%- set current_weather = 'rainy' -%}
     {%- elif current_weather in ['windy-variant'] -%}
         {%- set current_weather = 'cloudy' -%}
+    {%- elif current_weather not in conditions %}
+        {%- set weather = 'default' %}
     {%- endif -%}
     "
         ha-card {

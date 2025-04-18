@@ -59,6 +59,12 @@
 #  - stars : Configuration des étoiles
 #}
 {%- set conditions = {
+    'default': {
+        'clouds': low_clouds,
+        'night_sky': normal_night,
+        'day_sky': normal_day
+    },
+
     'lightning-rainy': {
         'clouds': heavy_clouds,
         'day_sky': grey_day,
