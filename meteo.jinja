@@ -18,7 +18,7 @@
   {{ ((range(min,max+step)| random) // step)*step }}
 {%- endmacro -%}
 
-{%- macro _weather_matrix(weather='') -%}
+{%- macro weather_matrix(weather='') -%}
     {%- set current_weather = 'default' -%}
     {%- if weather in config.conditions %}
         {%- set current_weather = weather %}
@@ -27,7 +27,7 @@
     {%- elif weather in ['windy-variant'] -%}
         {%- set current_weather = 'cloudy' -%}
     {%- elif weather in ['Ciel clair'] -%}
-        {%- set current_weather = 'clear-night' -%}
+        {%- set current_weather = 'sunny' -%}
     {%- elif weather in ['Pluies orageuses'] -%}
         {%- set current_weather = 'pouring' -%}
     {%- elif weather in [
@@ -52,8 +52,6 @@
         "Peu nuageux",
     ] -%}
         {%- set current_weather = 'partlycloudy' -%}
-    {%- elif weather in ["Brouillard dense"] -%}
-        {%- set current_weather = 'fog' -%}
     {%- endif -%}
     {{ current_weather }}
 {%- endmacro -%}
@@ -63,7 +61,7 @@
 {%- macro _sky_common(margin_top, sun_left, sun_top, elevation = state_attr('sun.sun','elevation'), rising = state_attr('sun.sun','rising'), below_horizon = is_state('sun.sun', 'below_horizon'), current_weather = states(config.location )) -%}
 
     {# Gestion des conditions météo exceptionnelles #}
-    {%- set current_weather = _weather_matrix(current_weather) %}
+    {%- set current_weather = weather_matrix(current_weather) %}
     "
         ha-card {
             margin-top: {{ margin_top }};
@@ -496,7 +494,7 @@
     {%- endif -%}
 
     {# Gestion des conditions météo exceptionnelles comme la grêle #}
-    {%- set current_weather = _weather_matrix(current_weather) %}
+    {%- set current_weather = weather_matrix(current_weather) %}
     
     {# Initialisation d'une variable de résultat vide #}
     {%- set html = "" -%}
