@@ -52,6 +52,8 @@
         "Peu nuageux",
     ] -%}
         {%- set current_weather = 'partlycloudy' -%}
+    {%- elif weather in ["Brouillard dense"] -%}
+        {%- set current_weather = 'fog' -%}
     {%- endif -%}
     {{ current_weather }}
 {%- endmacro -%}
